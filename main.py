@@ -25,40 +25,52 @@ def fitness(string):
             count += 1
     return count
 
-def fitnessAverage(group):
-    size = len(group)
+def fitnessAverage(population):
+    size = len(population)
     total = 0
 
-    for individual in group:
+    for individual in population:
         total += fitness(individual)
     
     return (total/size)
 
-def selection(group):
+def selection(population):
     pair = []
-    for x in range(2):
-        string1 = random.choice(group)
-        string2 = random.choice(group)
-        
-        print(string1, "\n", string2)
 
+    for x in range(2):
+        string1 = random.choice(population)
+        string2 = random.choice(population)
+        
         if fitness(string1) > fitness(string2):
             pair.append(string1)
         else:
             pair.append(string2)
-        
-        print(pair)
     
     return pair
 
 def createPairs(population):
-    pairCount = int(ceil((len(population)-2)/2)))
-    print(pairCount)
+    pairs = []
+    pairCount = math.ceil((len(population)-2)/2)
+    print("Number of Pairs:", pairCount)
+
+    for i in range(pairCount):
+        pairs.append(selection(population))
     
+    return pairs
+    
+def generateChildren(population):
+    pairs = createPairs(population)
+    print(pairs)
+    children = []
+    for pair in pairs:
+        child = ""
+        print(len(pair[0]))
+        for x in range(len(pair[0])):
+            child += pair[random.randint(0,1)][x]
+        children.append(child)
+    print(children)
 
-
-population = generatePopulation(4,4)
+population = generatePopulation(10,10)
 print(population)
 print("Population Fitness Average: ", fitnessAverage(population))
-breedingPairs.append(selection(population))
-print(breedingPairs)
+generateChildren(population)
