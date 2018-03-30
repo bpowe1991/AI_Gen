@@ -1,9 +1,10 @@
 import random
-import copy
+import math
 
 stringSize = 0
 populationSize = 0
 population = []
+breedingPairs = []
 
 def generatePopulation(length, size):
     group = []
@@ -34,8 +35,29 @@ def fitnessAverage(group):
     return (total/size)
 
 def selection(group):
-    print("Hi!")
+    pair = []
+    for x in range(2):
+        string1 = random.choice(group)
+        string2 = random.choice(group)
+        
+        print(string1, "\n", string2)
+
+        if fitness(string1) > fitness(string2):
+            pair.append(string1)
+        else:
+            pair.append(string2)
+        
+        print(pair)
+    
+    return pair
+
+def createPairs(group):
+    pairCount = int(ceil((len(group)-2)/2)))
+    
+
 
 population = generatePopulation(4,4)
 print(population)
 print("Population Fitness Average: ", fitnessAverage(population))
+breedingPairs.append(selection(population))
+print(breedingPairs)
