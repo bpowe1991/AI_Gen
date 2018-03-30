@@ -51,8 +51,9 @@ def selection(group):
     
     return pair
 
-def createPairs(group):
-    pairCount = int(ceil((len(group)-2)/2)))
+def createPairs(population):
+    pairCount = int(ceil((len(population)-2)/2)))
+    print(pairCount)
     
 
 
