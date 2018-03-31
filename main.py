@@ -172,7 +172,7 @@ def hasOptimum(population):
     return hasOpt
 
 
-population = generatePopulation(10,10)
+population = generatePopulation(15,10)
 
 previousAvg = fitnessAverage(population)
 print("Starting Population: ")
@@ -204,7 +204,7 @@ while flagCounter < 3:
         flagCounter += 1
     else:
         flagCounter = 0
-        
+
     if hasOptimum(population):
         optimumCounter += 1
     previousAvg = currentAvg
