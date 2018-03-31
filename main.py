@@ -202,6 +202,9 @@ while flagCounter < 3:
     print("Previous:", previousAvg, "\nCurrent:", currentAvg)
     if currentAvg <= previousAvg:
         flagCounter += 1
+    else:
+        flagCounter = 0
+        
     if hasOptimum(population):
         optimumCounter += 1
     previousAvg = currentAvg
