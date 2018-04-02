@@ -1,9 +1,11 @@
 import random
 import math
+import os
 
 stringSize = 0
-populationSize = 0
 population = []
+lowerBound = 0
+upperBound = 0
 
 def generatePopulation(length, size):
     group = []
@@ -171,27 +173,39 @@ def hasOptimum(population):
     
     return hasOpt
 
+def geneticAlgorithm(stringLength):
+    global population
 
-population = generatePopulation(15,10)
+    previousAvg = fitnessAverage(population)
+    print("Starting Population:\n")
+    for each in population:
+        print(each)
+    print("\nFitness Average:", previousAvg, "\n")
+    displayMostFit(population)
+    displayLeastFit(population)
+    print("Optimum Found:", hasOptimum(population))
+    print("-----------------------------------------------------------")
 
-previousAvg = fitnessAverage(population)
-print("Starting Population: ")
-for each in population:
-    print(each)
-print("\nFitness Average:", previousAvg, "\n")
-displayMostFit(population)
-displayLeastFit(population)
-print("Optimum Found:", hasOptimum(population))
-print("-----------------------------------------------------------")
+    flagCounter = 0
+    count = 1
+    optimumCounter = 0
 
-flagCounter = 0
-count = 1
-optimumCounter = 0
+    while flagCounter < 3:
+        population = replacement(population)
+        currentAvg = fitnessAverage(population)
 
-while flagCounter < 3:
-    population = replacement(population)
-    currentAvg = fitnessAverage(population)
-    print("Population -", count, ": ")
+        if currentAvg <= previousAvg:
+            flagCounter += 1
+        else:
+            flagCounter = 0
+
+        if hasOptimum(population):
+            optimumCounter += 1
+        previousAvg = currentAvg
+        count += 1
+    
+    print("Generation Count: ", count)
+    print("Population:\n")
     for each in population:
         print(each)
     print("\nFitness Average:", currentAvg, "\n")
@@ -199,14 +213,36 @@ while flagCounter < 3:
     displayLeastFit(population)
     print("Optimum Found:", hasOptimum(population))
     print("-----------------------------------------------------------")
-    print("Previous:", previousAvg, "\nCurrent:", currentAvg)
-    if currentAvg <= previousAvg:
-        flagCounter += 1
-    else:
-        flagCounter = 0
+    return hasOptimum(population), count
 
-    if hasOptimum(population):
-        optimumCounter += 1
-    previousAvg = currentAvg
-    count += 1
-    print("-----------------------------------------------------------")
+stringLength = None
+while stringLength is None:
+        input_value = input("Please enter the length of string: \n\n")
+        try:
+            #Convert user input into integer and check if in range
+            stringLength = int(input_value)
+            if stringLength < 1:
+                print("\nError! String length must be greater than 0.")
+                stringLength = None
+            else:
+                os.system('cls' if os.name == 'nt' else 'clear')
+                populationSize = 10
+                timesFound = 0
+                population = generatePopulation(stringLength, populationSize)
+                for x in range(5):
+                    foundOpt, bound = geneticAlgorithm(stringLength)
+                    if foundOpt == False:
+                        lowerBound = bound
+                        break
+                    else:
+                        timesFound += 1
+                if timesFound == 5:
+                    upperBound == bound
+                else:
+                    print("Failed to Find Optimum with population size", populationSize)
+
+                print("\n")
+
+        except ValueError:
+            #Error message for non-integer input
+            print("\nError! Please enter an integer greater than 0.")
