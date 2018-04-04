@@ -4,15 +4,13 @@ import os
 
 stringSize = 0
 population = []
-lowerBound = 0
-upperBound = 0
 
 def generatePopulation(length, size):
     group = []
 
-    for i in range(size):
+    for _ in range(size):
         string = ""
-        for c in range(length):
+        for _ in range(length):
             string += str(random.randint(0,1))
         
         group.append(string)
@@ -38,7 +36,7 @@ def fitnessAverage(population):
 def selection(population):
     pair = []
 
-    for x in range(2):
+    for _ in range(2):
         parent1 = random.choice(population)
         parent2 = random.choice(population)
         
@@ -53,7 +51,7 @@ def createPairs(population):
     pairs = []
     pairCount = math.ceil((len(population)-2)/2)
 
-    for i in range(pairCount):
+    for _ in range(pairCount):
         pairs.append(selection(population))
     
     return pairs
@@ -83,7 +81,7 @@ def generateChildren(population):
         child = ""
         secondChild = ""
 
-        copyChance = random.randint(1, len(pair[0]))
+        copyChance = random.randint(1, 10)
 
         if copyChance >= 1 and copyChance <= 4:
             child = pair[0]
@@ -97,12 +95,13 @@ def generateChildren(population):
         
         else:
             for x in range(len(pair[0])):
-                child += pair[random.randint(0,1)][x]
+                gene = random.randint(0,1)
+                child += pair[gene][x]
 
-                if child [len(child)-1] == "1":
-                    secondChild += "0"
+                if gene == 1:
+                    secondChild += pair[0][x]
                 else:
-                    secondChild += "1"
+                    secondChild += pair[1][x]
 
             child = mutation(child)
             secondChild = mutation(secondChild)
@@ -173,19 +172,9 @@ def hasOptimum(population):
     
     return hasOpt
 
-def geneticAlgorithm(stringLength):
-    global population
+def geneticAlgorithm(stringLength, population):
 
     previousAvg = fitnessAverage(population)
-    print("Starting Population:\n")
-    for each in population:
-        print(each)
-    print("\nFitness Average:", previousAvg, "\n")
-    displayMostFit(population)
-    displayLeastFit(population)
-    print("Optimum Found:", hasOptimum(population))
-    print("-----------------------------------------------------------")
-
     flagCounter = 0
     count = 1
     optimumCounter = 0
@@ -203,17 +192,62 @@ def geneticAlgorithm(stringLength):
             optimumCounter += 1
         previousAvg = currentAvg
         count += 1
-    
+
+    print("\nPopulation Size:", len(population))
     print("Generation Count: ", count)
-    print("Population:\n")
-    for each in population:
-        print(each)
     print("\nFitness Average:", currentAvg, "\n")
     displayMostFit(population)
     displayLeastFit(population)
     print("Optimum Found:", hasOptimum(population))
-    print("-----------------------------------------------------------")
-    return hasOptimum(population), count
+    print("\n-----------------------------------------------------------")
+    return hasOptimum(population)
+
+def calculatePopulationRange(population, populationSize, stringLength):
+    #os.system('cls' if os.name == 'nt' else 'clear')
+    timesFound = 0
+    lowerBound = 10
+    upperBound = 0
+
+    while populationSize <= 19200:
+        for _ in range(5):
+            population = generatePopulation(stringLength, populationSize)
+            foundOpt = geneticAlgorithm(stringLength, population)
+            if foundOpt == False:
+                lowerBound = populationSize
+                break
+            else:
+                timesFound += 1
+        if timesFound == 5:
+            upperBound = populationSize
+            break
+        else:
+            print("Failed to Find Optimum with population size", populationSize)
+            print("-----------------------------------------------------------")
+            timesFound = 0
+            populationSize *= 2
+    
+    return upperBound, lowerBound
+
+def calculateBisection(population, size, length):
+    #os.system('cls' if os.name == 'nt' else 'clear')
+    timesFound = 0
+    hasOpt = False
+
+    for _ in range(5):
+        population = generatePopulation(length, size)
+        foundOpt = geneticAlgorithm(length, population)
+        if foundOpt == False:
+            hasOpt = False
+            break
+        else:
+            timesFound += 1
+    
+    if timesFound == 5:
+        hasOpt = True
+    
+    return hasOpt
+
+
 
 stringLength = None
 while stringLength is None:
@@ -225,24 +259,25 @@ while stringLength is None:
                 print("\nError! String length must be greater than 0.")
                 stringLength = None
             else:
-                os.system('cls' if os.name == 'nt' else 'clear')
-                populationSize = 10
-                timesFound = 0
-                population = generatePopulation(stringLength, populationSize)
-                for x in range(5):
-                    foundOpt, bound = geneticAlgorithm(stringLength)
-                    if foundOpt == False:
-                        lowerBound = bound
-                        break
+                print("\n-----------------------------------------------------------")
+                upperBound, lowerBound = calculatePopulationRange(population, 10, stringLength)
+                while ((upperBound-lowerBound)/upperBound) >= 0.1:
+                    bisection = math.ceil((upperBound+lowerBound)/2)
+                    print("Current Upper Bound:", upperBound, 
+                          "\nCurrent Lower Bound:", lowerBound, 
+                          "\nCurrent Bisection:", bisection)
+                    print("-----------------------------------------------------------")
+                    success = calculateBisection(population, bisection, stringLength)
+                    if success == True:
+                        print("Success at population size", bisection)
+                        upperBound = bisection
                     else:
-                        timesFound += 1
-                if timesFound == 5:
-                    upperBound == bound
-                else:
-                    print("Failed to Find Optimum with population size", populationSize)
-
-                print("\n")
-
+                        print("Failure at population size", bisection)
+                        lowerBound = bisection
+                    print("-----------------------------------------------------------\n\n")
+                print("Calculated Minimum Population: ", upperBound, "\n\n")
+                
+                
         except ValueError:
             #Error message for non-integer input
             print("\nError! Please enter an integer greater than 0.")
