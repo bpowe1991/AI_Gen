@@ -248,7 +248,6 @@ def calculateBisection(population, size, length):
     return hasOpt
 
 
-
 stringLength = None
 while stringLength is None:
         input_value = input("Please enter the length of string: \n\n")
