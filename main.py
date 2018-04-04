@@ -2,7 +2,6 @@ import random
 import math
 import os
 
-stringSize = 0
 population = []
 
 def generatePopulation(length, size):
