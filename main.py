@@ -272,8 +272,8 @@ while stringLength is None:
                     else:
                         print("Failure at population size", bisection)
                         lowerBound = bisection
-                    print("-----------------------------------------------------------\n\n")
-                print("Calculated Minimum Population: ", upperBound, "\n\n")
+                    print("-----------------------------------------------------------")
+                print("\n\nCalculated Minimum Population: ", upperBound, "\n\n")
                 
                 
         except ValueError:
